@@ -7,19 +7,18 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.petya.build.displayactivity.TellNerdJokeIntentActivity;
+import com.udacity.gradle.builditbigger.AsyncResponse;
 import com.udacity.gradle.builditbigger.R;
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.InterstitialAd;
 import com.udacity.gradle.builditbigger.RestAsyncTask;
 
-import java.util.concurrent.ExecutionException;
-
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements AsyncResponse {
     String joke;
     private InterstitialAd mInterstitialAd;
 
@@ -49,15 +48,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onAdLoaded() {
                 super.onAdLoaded();
-                try {
-                    joke = new RestAsyncTask().execute(MainActivity.this).get();
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                    joke = null;
-                } catch (ExecutionException e) {
-                    e.printStackTrace();
-                    joke = null;
-                }
+
             }
 
 
@@ -94,10 +85,17 @@ public class MainActivity extends AppCompatActivity {
 
     @OnClick(R.id.tell_joke_button)
     public void tellJoke() {
+
         if (mInterstitialAd.isLoaded()) {
             mInterstitialAd.show();
         }
+        new RestAsyncTask(MainActivity.this).execute(MainActivity.this);
     }
 
 
+    @Override
+    public void processFinish(String output) {
+        joke=output;
+        showJokeviaIntent();
+    }
 }

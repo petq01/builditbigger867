@@ -14,15 +14,20 @@ import java.io.IOException;
 /**
  * Created by Petya Marinova on 8/3/2018.
  */
-public class RestAsyncTask extends AsyncTask<Context,Void,String> {
+public class RestAsyncTask extends AsyncTask<Context, Void, String> {
     private static MyApi sMyApi = null;
     private Context mContext;
+    private AsyncResponse asyncResponse;
+
+    public RestAsyncTask(AsyncResponse activityContext) {
+        this.asyncResponse = activityContext;
+    }
 
     @SafeVarargs
     @Override
     protected final String doInBackground(Context... pairs) {
-        if (sMyApi==null){
-            MyApi.Builder builder = new MyApi.Builder(AndroidHttp.newCompatibleTransport(),new AndroidJsonFactory(),null)
+        if (sMyApi == null) {
+            MyApi.Builder builder = new MyApi.Builder(AndroidHttp.newCompatibleTransport(), new AndroidJsonFactory(), null)
                     .setRootUrl("http://10.0.2.2:8080/_ah/api/")
                     .setGoogleClientRequestInitializer(new GoogleClientRequestInitializer() {
                         @Override
@@ -36,7 +41,11 @@ public class RestAsyncTask extends AsyncTask<Context,Void,String> {
         mContext = pairs[0];
 
         try {
-            return sMyApi.getJoke().execute().getMyNerdJoke();
+
+            String myJoke = sMyApi.getJoke().execute().getMyNerdJoke();
+
+            asyncResponse.processFinish(myJoke);
+            return myJoke;
 
         } catch (IOException e) {
             e.printStackTrace();

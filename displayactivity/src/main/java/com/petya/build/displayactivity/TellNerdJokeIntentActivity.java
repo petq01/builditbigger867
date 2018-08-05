@@ -16,9 +16,10 @@ public class TellNerdJokeIntentActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tell_nerd_joke_intent);
         Intent intentWhichStartedActivity = getIntent();
+        if(intentWhichStartedActivity.hasExtra(EXTRA_JOKE)){
         String joke = intentWhichStartedActivity.getStringExtra(EXTRA_JOKE);
         TextView jokeTextView = findViewById(R.id.joke_text_view);
-        jokeTextView.setText(joke);
+        jokeTextView.setText(joke);}
     }
 
 }

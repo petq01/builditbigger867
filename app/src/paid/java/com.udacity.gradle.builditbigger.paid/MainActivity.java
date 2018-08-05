@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import com.petya.build.displayactivity.TellNerdJokeIntentActivity;
+import com.udacity.gradle.builditbigger.AsyncResponse;
 import com.udacity.gradle.builditbigger.R;
 import com.udacity.gradle.builditbigger.RestAsyncTask;
 
@@ -15,9 +16,9 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements AsyncResponse {
 
-
+    String joke;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -51,17 +52,12 @@ public class MainActivity extends AppCompatActivity {
 
     @OnClick(R.id.tell_joke_button)
     public void tellJoke() {
-        String joke =
-                null;
-        try {
-            joke = new RestAsyncTask().execute(this).get();
-        } catch (InterruptedException e) {
-            joke = null;
-            e.printStackTrace();
-        } catch (ExecutionException e) {
-            joke = null;
-            e.printStackTrace();
-        }
+        new RestAsyncTask(MainActivity.this).execute(this);
+
+    }
+    @Override
+    public void processFinish(String output) {
+        joke=output;
         Intent intent = new Intent(this, TellNerdJokeIntentActivity.class);
         intent.putExtra(TellNerdJokeIntentActivity.EXTRA_JOKE, joke);
         startActivity(intent);
